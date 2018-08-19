@@ -14,6 +14,12 @@ struct rfb_security_types_t {
     uint8_t count;
 } __attribute__ ((packed));
 
+struct rfb_keyevent_t {
+    uint8_t type;
+    uint8_t down_flag;
+    uint16_t padding;
+    uint32_t key;
+} __attribute__ ((packed));
 enum {
     OK = 0,
     FAILED,
@@ -112,6 +118,7 @@ struct ops_rfb_t {
     int (*processor)(int socket_fd, struct server_init_t *si, struct framebuffer_dev_t *fb_dev);
     int (*request_entire_screen)(int socket_fd, struct server_init_t *si);
     int (*request_changed_screen)(int socket_fd, struct server_init_t *si);
+    int (*request_keyevent)(int socket, uint8_t down_flag, uint32_t key);
 };
 
 struct ops_rfb_t *get_rfb_instance();

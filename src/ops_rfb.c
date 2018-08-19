@@ -282,6 +282,18 @@ static int rfb_handshake(int socket_fd, struct server_init_t *si)
     return -1;
 }
 
+static int rfb_keyevent(int socket_fd, uint8_t down_flag, uint32_t key)
+{
+	int wc = 0;
+	struct rfb_keyevent_t keyevent;
+	keyevent.type = 4;
+	keyevent.down_flag = down_flag;
+	keyevent.padding = 0;
+	keyevent.key = key;
+	wc = rfb_write_socket(socket_fd, (uint8_t *)&keyevent, sizeof(struct rfb_keyevent_t));
+	return wc;
+}
+
 static int rfb_processor(int socket_fd, struct server_init_t *si, struct framebuffer_dev_t *fb_dev)
 {
     int i = 0;
@@ -413,6 +425,7 @@ struct ops_rfb_t *get_rfb_instance()
 		obj->processor = rfb_processor;
 		obj->request_entire_screen = rfb_request_entire_content;
 		obj->request_changed_screen = rfb_request_changed_content;
+		obj->request_keyevent = rfb_keyevent;
 	}
 	return obj;
 }
